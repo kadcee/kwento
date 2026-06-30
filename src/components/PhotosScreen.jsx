@@ -114,4 +114,27 @@ export default function PhotosScreen({ userId }) {
             background: 'rgba(0,0,0,0.9)',
             display: 'flex',
             flexDirection: 'column',
-            alignItems:
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 100,
+            padding: 20
+          }}
+        >
+          <img
+            src={selected.photo_url}
+            alt=""
+            style={{ maxWidth: '100%', maxHeight: '70vh', borderRadius: 12, objectFit: 'contain' }}
+          />
+          <div style={{ marginTop: 16, textAlign: 'center' }}>
+            <p style={{ color: '#fff', fontSize: 14, fontWeight: 500 }}>{formatDate(selected.created_at)}</p>
+            {selected.moods?.length > 0 && (
+              <div style={{ marginTop: 6, fontSize: 20 }}>
+                {selected.moods.map(m => <span key={m} style={{ marginRight: 4 }}>{m}</span>)}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
