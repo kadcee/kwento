@@ -41,7 +41,8 @@
 }
 
 html, body {
-  height: 100%;
+  height: 100vh;
+  height: 100dvh;
   background: var(--bg);
   color: var(--text);
   font-family: var(--font);
@@ -49,10 +50,12 @@ html, body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   overscroll-behavior: none;
+  overflow: hidden;
 }
 
 #root {
-  height: 100%;
+  height: 100vh;
+  height: 100dvh;
   max-width: 430px;
   margin: 0 auto;
   display: flex;
