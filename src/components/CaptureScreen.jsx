@@ -296,10 +296,17 @@ export default function CaptureScreen({ userId }) {
                     color: 'var(--text)'
                   }}>
                     {entry.entry_type === 'photo' ? (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--accent)' }}>
-                        <span>📷</span><span>Photo saved</span>
-                      </div>
-                    ) : (
+  <img
+    src={entry.photo_url}
+    alt="Captured moment"
+    style={{
+      width: '100%',
+      maxWidth: 160,
+      borderRadius: 8,
+      display: 'block'
+    }}
+  />
+) : (
                       <>
                         {entry.content && <p style={{ marginBottom: entry.moods?.length ? 6 : 0 }}>{entry.content}</p>}
                         {entry.moods?.length > 0 && (
