@@ -303,8 +303,9 @@ export default function CaptureScreen({ userId }) {
     src={entry.photo_url}
     alt="Captured moment"
     style={{
-      width: '100%',
-      maxWidth: 160,
+      width: 64,
+      height: 64,
+      objectFit: 'cover',
       borderRadius: 8,
       display: 'block'
     }}
