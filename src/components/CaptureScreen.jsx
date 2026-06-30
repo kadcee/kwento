@@ -106,17 +106,20 @@ export default function CaptureScreen({ userId }) {
       .from('photos')
       .upload(path, file)
     if (!uploadError) {
-      const { data: { publicUrl } } = supabase.storage.from('photos').getPublicUrl(path)
-      await supabase.from('entries').insert({
-        user_id: userId,
-        photo_url: publicUrl,
-        moods: selectedMoods,
-        entry_type: 'photo'
-      })
-      setSavedMsg('Photo saved')
-      setTimeout(() => setSavedMsg(''), 2000)
-      loadTodayEntries()
-    }
+  const { data: signedData } = await supabase.storage
+    .from('photos')
+    .createSignedUrl(path, 60 * 60 * 24 * 365 * 10)
+  await supabase.from('entries').insert({
+    user_id: userId,
+    photo_url: signedData?.signedUrl,
+    photo_path: path,
+    moods: selectedMoods,
+    entry_type: 'photo'
+  })
+  setSavedMsg('Photo saved')
+  setTimeout(() => setSavedMsg(''), 2000)
+  loadTodayEntries()
+}
     setUploadingPhoto(false)
     e.target.value = ''
   }

@@ -26,6 +26,24 @@ export default function PhotosScreen({ userId }) {
     return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
   }
 
+  function formatShortDate(iso) {
+    return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+  }
+
+  function groupByMonth(items) {
+    const groups = {}
+    for (const item of items) {
+      const d = new Date(item.created_at)
+      const key = d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+      if (!groups[key]) groups[key] = []
+      groups[key].push(item)
+    }
+    return groups
+  }
+
+  const grouped = groupByMonth(photos)
+  const monthKeys = Object.keys(grouped)
+
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <div style={{ padding: '20px 20px 0' }}>
@@ -44,31 +62,46 @@ export default function PhotosScreen({ userId }) {
             </p>
           </div>
         ) : (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: 6
-          }}>
-            {photos.map(photo => (
-              <button
-                key={photo.id}
-                onClick={() => setSelected(photo)}
-                style={{
-                  aspectRatio: '1',
-                  borderRadius: 8,
-                  overflow: 'hidden',
-                  border: '1px solid var(--border)',
-                  padding: 0
-                }}
-              >
-                <img
-                  src={photo.photo_url}
-                  alt=""
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                />
-              </button>
-            ))}
-          </div>
+          monthKeys.map(monthKey => (
+            <div key={monthKey} style={{ marginBottom: 20 }}>
+              <p style={{
+                fontSize: 11, fontWeight: 500, color: 'var(--text-muted)',
+                textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10
+              }}>{monthKey}</p>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: 6
+              }}>
+                {grouped[monthKey].map(photo => (
+                  <button
+                    key={photo.id}
+                    onClick={() => setSelected(photo)}
+                    style={{
+                      position: 'relative',
+                      aspectRatio: '1',
+                      borderRadius: 8,
+                      overflow: 'hidden',
+                      border: '1px solid var(--border)',
+                      padding: 0
+                    }}
+                  >
+                    <img
+                      src={photo.photo_url}
+                      alt=""
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                    />
+                    <span style={{
+                      position: 'absolute', bottom: 4, left: 4,
+                      fontSize: 10, color: '#fff',
+                      background: 'rgba(0,0,0,0.55)',
+                      padding: '2px 6px', borderRadius: 10
+                    }}>{formatShortDate(photo.created_at)}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))
         )}
       </div>
 
@@ -81,27 +114,4 @@ export default function PhotosScreen({ userId }) {
             background: 'rgba(0,0,0,0.9)',
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 100,
-            padding: 20
-          }}
-        >
-          <img
-            src={selected.photo_url}
-            alt=""
-            style={{ maxWidth: '100%', maxHeight: '70vh', borderRadius: 12, objectFit: 'contain' }}
-          />
-          <div style={{ marginTop: 16, textAlign: 'center' }}>
-            <p style={{ color: '#fff', fontSize: 14, fontWeight: 500 }}>{formatDate(selected.created_at)}</p>
-            {selected.moods?.length > 0 && (
-              <div style={{ marginTop: 6, fontSize: 20 }}>
-                {selected.moods.map(m => <span key={m} style={{ marginRight: 4 }}>{m}</span>)}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
+            alignItems:
