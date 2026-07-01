@@ -60,7 +60,7 @@ export default function App() {
       }}>
         {[
           { id: 'today', emoji: '◆', label: 'Today' },
-          { id: 'photos', emoji: '📷', label: 'Photos' },
+          { id: 'photos', emoji: '🖼️', label: 'Gallery' },
           { id: 'summaries', emoji: '◇', label: 'Summaries' },
         ].map(({ id, emoji, label }) => (
           <button

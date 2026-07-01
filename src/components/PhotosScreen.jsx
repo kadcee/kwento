@@ -41,13 +41,30 @@ export default function PhotosScreen({ userId }) {
     return groups
   }
 
+  async function handleDownload(photo) {
+    try {
+      const response = await fetch(photo.photo_url)
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `kwento-${formatDate(photo.created_at).replace(/\s/g, '-')}.jpg`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+    } catch {
+      window.open(photo.photo_url, '_blank')
+    }
+  }
+
   const grouped = groupByMonth(photos)
   const monthKeys = Object.keys(grouped)
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <div style={{ padding: '20px 20px 0' }}>
-        <h1 style={{ fontSize: 22, fontWeight: 500, marginBottom: 16 }}>Photos</h1>
+        <h1 style={{ fontSize: 22, fontWeight: 500, marginBottom: 16 }}>Gallery</h1>
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '0 20px 20px' }}>
@@ -55,7 +72,7 @@ export default function PhotosScreen({ userId }) {
           <p style={{ color: 'var(--text-muted)', fontSize: 14, textAlign: 'center', marginTop: 40 }}>Loading...</p>
         ) : photos.length === 0 ? (
           <div style={{ textAlign: 'center', marginTop: 60 }}>
-            <p style={{ fontSize: 32, marginBottom: 12 }}>📷</p>
+            <p style={{ fontSize: 32, marginBottom: 12 }}>🖼️</p>
             <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>No photos yet</p>
             <p style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 6 }}>
               Photos you capture on the Today tab show up here
@@ -111,7 +128,7 @@ export default function PhotosScreen({ userId }) {
           style={{
             position: 'fixed',
             top: 0, left: 0, right: 0, bottom: 0,
-            background: 'rgba(0,0,0,0.9)',
+            background: 'rgba(0,0,0,0.92)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -123,15 +140,34 @@ export default function PhotosScreen({ userId }) {
           <img
             src={selected.photo_url}
             alt=""
-            style={{ maxWidth: '100%', maxHeight: '70vh', borderRadius: 12, objectFit: 'contain' }}
+            style={{ maxWidth: '100%', maxHeight: '65vh', borderRadius: 12, objectFit: 'contain' }}
           />
           <div style={{ marginTop: 16, textAlign: 'center' }}>
             <p style={{ color: '#fff', fontSize: 14, fontWeight: 500 }}>{formatDate(selected.created_at)}</p>
             {selected.moods?.length > 0 && (
-              <div style={{ marginTop: 6, fontSize: 20 }}>
+              <div style={{ marginTop: 6, fontSize: 20, marginBottom: 12 }}>
                 {selected.moods.map(m => <span key={m} style={{ marginRight: 4 }}>{m}</span>)}
               </div>
             )}
+            <button
+              onClick={e => { e.stopPropagation(); handleDownload(selected) }}
+              style={{
+                marginTop: 12,
+                padding: '10px 24px',
+                background: 'rgba(255,255,255,0.15)',
+                border: '1px solid rgba(255,255,255,0.3)',
+                borderRadius: 20,
+                color: '#fff',
+                fontSize: 13,
+                fontWeight: 500,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                margin: '12px auto 0'
+              }}
+            >
+              <span>⬇️</span> Save to device
+            </button>
           </div>
         </div>
       )}
